@@ -12,16 +12,16 @@ class JobsController < ApplicationController
   end
 
   # GET /jobs/new
-  # def new
-  #   html = render_to_string(partial: 'form', locals: { job: Job.new })
-  #   render operations: cable_car
-  #     .inner_html('#slideover-content', html: html)
-  #     .text_content('#slideover-header', text: 'Post a new job')
-  # end
-
   def new
-    @job = Job.new
+    html = render_to_string(partial: 'form', locals: { job: Job.new })
+    render operations: cable_car
+      .inner_html('#slideover-content', html: html)
+      .text_content('#slideover-header', text: 'Post a new job')
   end
+
+  # def new
+  #   @job = Job.new
+  # end
 
   # GET /jobs/1/edit
   def edit
@@ -32,37 +32,37 @@ class JobsController < ApplicationController
   end
 
   # POST /jobs or /jobs.json
-  # def create
-  #   @job = Job.new(job_params)
-  #   @job.account = current_user.account
-  #   if @job.save
-  #     html = render_to_string(partial: 'job', locals: { job: @job })
-  #     render operations: cable_car
-  #       .prepend('#jobs', html: html)
-  #       .dispatch_event(name: 'submit:success')
-  #   else
-  #     html = render_to_string(partial: 'form', locals: { job: @job })
-  #     render operations: cable_car
-  #       .inner_html('#job-form', html: html), status: :unprocessable_entity
-  #   end
-  # end
   def create
     @job = Job.new(job_params)
     @job.account = current_user.account
     if @job.save
-      render turbo_stream: turbo_stream.prepend(
-        'jobs',
-        partial: 'job',
-        locals: { job: @job }
-      )
+      html = render_to_string(partial: 'job', locals: { job: @job })
+      render operations: cable_car
+        .prepend('#jobs', html: html)
+        .dispatch_event(name: 'submit:success')
     else
-      render turbo_stream: turbo_stream.replace(
-        'job-form',
-        partial: 'form',
-        locals: { job: @job }
-      ), status: :unprocessable_entity
+      html = render_to_string(partial: 'form', locals: { job: @job })
+      render operations: cable_car
+        .inner_html('#job-form', html: html), status: :unprocessable_entity
     end
   end
+  # def create
+  #   @job = Job.new(job_params)
+  #   @job.account = current_user.account
+  #   if @job.save
+  #     render turbo_stream: turbo_stream.prepend(
+  #       'jobs',
+  #       partial: 'job',
+  #       locals: { job: @job }
+  #     )
+  #   else
+  #     render turbo_stream: turbo_stream.replace(
+  #       'job-form',
+  #       partial: 'form',
+  #       locals: { job: @job }
+  #     ), status: :unprocessable_entity
+  #   end
+  # end
 
   # PATCH/PUT /jobs/1 or /jobs/1.json
   def update
@@ -79,14 +79,14 @@ class JobsController < ApplicationController
   end
 
   # DELETE /jobs/1 or /jobs/1.json
-  def destroy
-    @job.destroy
-    render turbo_stream: turbo_stream.remove(@job)
-  end
   # def destroy
   #   @job.destroy
-  #   render operations: cable_car.remove(selector: dom_id(@job))
+  #   render turbo_stream: turbo_stream.remove(@job)
   # end
+  def destroy
+    @job.destroy
+    render operations: cable_car.remove(selector: dom_id(@job))
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
