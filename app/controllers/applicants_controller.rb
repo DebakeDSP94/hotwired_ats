@@ -1,6 +1,7 @@
 class ApplicantsController < ApplicationController
   before_action :set_applicant, only: %i[ show edit update destroy change_stage ]
   before_action :authenticate_user!
+  include Filterable
 
   def change_stage
     @applicant.update(applicant_params)
@@ -9,7 +10,9 @@ class ApplicantsController < ApplicationController
 
   # GET /applicants or /applicants.json
   def index
-    @applicants = Applicant.all
+    @grouped_applicants = filter!(Applicant)
+      .for_account(current_user.account_id)
+      .group_by(&:stage)
   end
 
   # GET /applicants/1 or /applicants/1.json
@@ -75,5 +78,9 @@ class ApplicantsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def applicant_params
       params.require(:applicant).permit(:first_name, :last_name, :email, :phone, :stage, :status, :job_id, :resume)
+    end
+
+    def search_params
+      params.permit(:query, :job, :sort)
     end
 end
