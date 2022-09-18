@@ -1,22 +1,29 @@
 Rails.application.routes.draw do
+  get 'resumes/show'
+
   resources :applicants do
     patch :change_stage, on: :member
+    resources :emails, only: %i[index new create show]
+    resources :email_replies, only: %i[new]
+    get :resume, action: :show, controller: 'resumes'
   end
+
   resources :jobs
+
   devise_for :users,
-  path: '',
-  controllers: {
-    registrations: 'users/registrations',
-    sessions: 'users/sessions'
-  },
-  path_names: {
-    sign_in: 'login',
-    password: 'forgot',
-    confirmation: 'confirm',
-    sign_up: 'sign_up',
-    sign_out: 'signout'
-  }
-# Snip
+    path: '',
+    controllers: {
+      registrations: 'users/registrations',
+      sessions: 'users/sessions'
+    },
+    path_names: {
+      sign_in: 'login',
+      password: 'forgot',
+      confirmation: 'confirm',
+      sign_up: 'sign_up',
+      sign_out: 'signout'
+    }
+
   authenticated :user do
     root to: 'dashboard#show', as: :user_root
   end

@@ -1,6 +1,8 @@
 class Applicant < ApplicationRecord
   belongs_to :job
 
+  has_many :emails, dependent: :destroy
+
   include PgSearch::Model
   pg_search_scope :text_search,
     against: %i[first_name last_name email],
