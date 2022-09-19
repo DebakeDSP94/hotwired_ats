@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   belongs_to :account
 
+  has_many :notifications, dependent: :destroy
+
   accepts_nested_attributes_for :account
 
   after_create_commit :generate_alias

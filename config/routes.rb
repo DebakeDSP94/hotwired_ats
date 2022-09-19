@@ -24,6 +24,8 @@ Rails.application.routes.draw do
       sign_out: 'signout'
     }
 
+  resources :notifications, only: %i[index]
+
   authenticated :user do
     root to: 'dashboard#show', as: :user_root
   end

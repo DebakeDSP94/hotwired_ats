@@ -8,10 +8,26 @@ class Email < ApplicationRecord
 
   after_create_commit :send_email, if: :outbound?
 
+  def send_email
+    ApplicantMailer.contact(email: self).deliver_later
+  end
+
   enum email_type: {
     outbound: 'outbound',
     inbound: 'inbound'
   }
+
+  after_create_commit :create_notification, if: :inbound?
+
+  def create_notification
+    InboundEmailNotification.create(
+      user: user,
+      params: {
+        applicant: applicant,
+        email: self
+      }
+    )
+  end
 
   after_create_commit :broadcast_to_applicant
 
@@ -28,9 +44,7 @@ class Email < ApplicationRecord
     )
   end
 
-  def send_email
-    ApplicantMailer.contact(email: self).deliver_later
-  end
+
 
   def build_reply(email_id)
     replying_to = Email.find(email_id)
