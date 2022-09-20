@@ -24,6 +24,14 @@ Rails.application.routes.draw do
       sign_out: 'signout'
     }
 
+    namespace :careers do
+      resources :accounts, only: %i[show] do
+        resources :jobs, only: %i[index show], shallow: true do
+          resources :applicants, only: %i[new create]
+        end
+      end
+    end
+
   resources :notifications, only: %i[index]
 
   authenticated :user do
