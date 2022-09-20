@@ -30,6 +30,8 @@ class Applicant < ApplicationRecord
 
   FILTER_PARAMS = %i[query job sort].freeze
 
+  has_many :comments, as: :commentable, dependent: :destroy, counter_cache: :commentable_count
+  
   scope :for_job, ->(job_id) { job_id.present? ? where(job_id: job_id) : all }
   scope :search, ->(query) { query.present? ? text_search(query) : all }
   scope :sorted, ->(selection) { selection.present? ? apply_sort(selection) : all }

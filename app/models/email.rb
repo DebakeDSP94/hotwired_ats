@@ -19,15 +19,25 @@ class Email < ApplicationRecord
 
   after_create_commit :create_notification, if: :inbound?
 
-  def create_notification
-    InboundEmailNotification.create(
-      user: user,
-      params: {
-        applicant: applicant,
-        email: self
-      }
-    )
-  end
+  after_create_commit :notify_recipient, if: :inbound?
+
+def notify_recipient
+  NotifyUserJob.perform_later(
+    resource_id: id,
+    resource_type: 'Email',
+    user_id: user.id
+  )
+end
+
+def create_notification(user)
+  InboundEmailNotification.create(
+    user: user,
+    params: {
+      applicant: applicant,
+      email: self
+    }
+  )
+end
 
   after_create_commit :broadcast_to_applicant
 
