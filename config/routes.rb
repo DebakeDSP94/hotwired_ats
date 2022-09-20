@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'charts/show'
   get 'resumes/show'
 
   resources :applicants do
@@ -10,7 +11,9 @@ Rails.application.routes.draw do
 
   resources :invites, only: %i[create update]
   get 'invite', to: 'invites#new', as: 'accept_invite'
-  
+
+  get 'charts/show', as: :chart
+
   resources :users
 
   resources :jobs
