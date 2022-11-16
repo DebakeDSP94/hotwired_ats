@@ -15,3 +15,5 @@ import '@rails/actiontext';
 import * as ActiveStorage from '@rails/activestorage';
 
 ActiveStorage.start();
+import "@hotwired/turbo-rails"
+import "./controllers"

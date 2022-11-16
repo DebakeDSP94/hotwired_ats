@@ -1,13 +1,9 @@
-import { Application } from '@hotwired/stimulus';
-import StimulusReflex from 'stimulus_reflex';
+import { Application } from "@hotwired/stimulus"
 
-const application = Application.start();
+const application = Application.start()
 
 // Configure Stimulus development experience
-application.warnings = true;
-application.debug = false;
-window.Stimulus = application;
+application.debug = false
+window.Stimulus   = application
 
-StimulusReflex.initialize(application, { isolate: true });
-
-export { application };
+export { application }
